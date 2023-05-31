@@ -1,6 +1,7 @@
 from db_manager import DB_Manager
 from Student import Student
 from Teacher import Teacher
+from Class import Class
 import datetime
 
 
@@ -26,9 +27,9 @@ class APP:
             elif process == "2":
                 self.teacher_transactions()
             elif process == "3":
-                self.edit_student()
+                self.class_transactions()
             elif process == "4":
-                self.delete_student()
+                self.lesson_transactions()
             elif process == "E" or "e":
                 break
             else: 
@@ -76,7 +77,7 @@ class APP:
             print(msg)
             process = input("Your Choice: ")
             if process == "1":
-                self.display_class()
+                self.display_classes()
             elif process == "2":
                 self.add_class()
             elif process == "3":
@@ -203,7 +204,33 @@ class APP:
 
         self.db.delete_teacher(teacherid)
 
+    def add_class(self):
+        self.db.display_teachers_with_classes()
+        print("*****A teacher is assigned for each class. That's why you can only choose a teacher who doesn't have a classroom.*****")
+        teacherid = int(input("Which teacher would you like to add class to?: "))
 
+        name = input("Class Name: ")
+        a_class = Class(None, name, teacherid)
+        self.db.add_class(a_class)
+
+    def edit_class(self):
+        self.display_classes()
+        classid = int(input("Class ID: "))
+
+        cls = self.db.get_class_by_id(classid)
+
+        print("You can only enter the information you want to update, you can leave the ones you don't want blank.")
+
+        cls[0].Name = input("Name: ") or cls[0].Name
+        cls[0].Teacherid = input("Teacher ID: ") or cls[0].Teacherid 
+
+        self.db.edit_class(cls[0])
+
+    def delete_class(self):
+        self.display_classes()
+        classid = int(input("Class ID: "))
+
+        self.db.delete_class(classid)
 
 app = APP()
 app.init_app()

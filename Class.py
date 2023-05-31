@@ -12,7 +12,10 @@ class Class:
     def create_class(cls):
         list = []
 
-        for i in cls:
-            list.append(Class(i[0], i[1], i[2]))
+        if isinstance(cls, tuple):
+            list.append(Class(cls[0], cls[1], cls[2]))
+        else:
+            for i in cls:
+                list.append(Class(i[0], i[1], i[2]))
 
         return list

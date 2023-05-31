@@ -120,6 +120,16 @@ class DB_Manager:
         except mysql.connector.Error as err:
             print("Error:", err)
 
+    def display_teachers_with_classes(self):
+        sql = "SELECT teacher.id, teacher.name, teacher.surname, class.name FROM Teacher LEFT JOIN Class  ON teacher.id = class.teacherid"
+
+        self.cursor.execute(sql)
+        teachers = self.cursor.fetchall()
+
+        print("Teachers with Classes:")
+        for teacher in teachers:
+            print(f"Teacher ID: {teacher[0]}, Name: {teacher[1]} {teacher[2]}, Class: {teacher[3]} ")
+
     def get_classes(self):
         sql = "SELECT * From Class"
 
@@ -130,8 +140,50 @@ class DB_Manager:
         except mysql.connector.Error as err:
             print("Error:", err) 
 
+    def get_class_by_id(self, classid):
+        sql = "SELECT * From Class WHERE id = %s"
+        value = (classid, )
+
+        self.cursor.execute(sql, value)
+        try:
+            cls = self.cursor.fetchone()
+            return Class.create_class(cls)
+        except mysql.connector.Error as err:
+            print("Error:", err) 
+
     def add_class(self, classes: Class):
-        pass
+        sql = "INSERT INTO CLASS(Name, teacherid) VALUES (%s, %s)"
+        values = (classes.Name, classes.Teacherid )
+        self.cursor.execute(sql, values)
+
+        try:
+            self.connection.commit()
+            print(f'Added {self.cursor.rowcount} records.')
+        except mysql.connector.Error as err:
+            print("Error:", err)
+
+    def edit_class(self, classes: Class):
+        sql = "UPDATE CLASS SET Name = %s, Teacherid = %s WHERE id = %s"
+        values = (classes.Name, classes.Teacherid, classes.id)
+        self.cursor.execute(sql, values)
+
+        try:
+            self.connection.commit()
+            print(f'Updated {self.cursor.rowcount} records.')
+        except mysql.connector.Error as err:
+            print("Error:", err)
+
+    def delete_class(self, classid):
+        sql = "DELETE From Class WHERE id = %s"
+        values = (classid,)
+        self.cursor.execute(sql, values)
+
+        try:
+            self.connection.commit()
+            print(f'Deleted {self.cursor.rowcount} records.')
+        except mysql.connector.Error as err:
+            print("Error:", err)
+            
     def get_lesson():
         pass
 
@@ -141,16 +193,11 @@ class DB_Manager:
         self.connection.close()
         print("Database connection closed.")
 
-# db = DB_Manager()
-# student = db.get_student_by_id(7)
-# student[0].Name = "Jake"
-# # student = Student(None, 402, 'Victoria', 'Anderson', '2002-10-17', 'F', 4)
 
-# # db.add_student(student)
-# db.edit_student(student[0])
-# student = db.get_student_by_id(1)
 
-# print(student.Name)
 
-# student = db.get_students_by_classid(1)
-# print(student[3].Name)
+
+
+
+
+
