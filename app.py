@@ -2,6 +2,7 @@ from db_manager import DB_Manager
 from Student import Student
 from Teacher import Teacher
 from Class import Class
+from Lesson import Lesson
 import datetime
 
 
@@ -9,8 +10,6 @@ class APP:
     def __init__(self):
         self.db = DB_Manager()
 
-# Sınıf ekle - sil 
-# Ders ekle - sil 
 # Ders - sınıf için işlem
     def init_app(self):
         while True:
@@ -36,7 +35,7 @@ class APP:
                 print("Wrong Choice.")
     
     def student_transactions(self):
-        msg = "*****\n1 - Student List\n2 - Add Student\n3 - Update Student\n4 - Delete Student\n5 - Back To Menu(B/b)"
+        msg = "********************\n1 - Student List\n2 - Add Student\n3 - Update Student\n4 - Delete Student\n5 - Back To Menu(B/b)\n********************"
         while True:
             print(msg)
             process = input("Your Choice: ")
@@ -54,7 +53,7 @@ class APP:
                 print("Wrong Choice.")   
 
     def teacher_transactions(self):
-        msg = "*****\n1 - Teacher List\n2 - Add Teacher\n3 - Update Teacher\n4 - Delete Teacher\n5 - Back To Menu(B/b)"
+        msg = "********************\n1 - Teacher List\n2 - Add Teacher\n3 - Update Teacher\n4 - Delete Teacher\n5 - Back To Menu(B/b)\n********************"
         while True:
             print(msg)
             process = input("Your Choice: ")
@@ -72,7 +71,7 @@ class APP:
                 print("Wrong Choice.") 
 
     def class_transactions(self):
-        msg = "*****\n1 - Class List\n2 - Add Class\n3 - Update Class\n4 - Delete Class\n5 - Back To Menu(B/b)"
+        msg = "********************\n1 - Class List\n2 - Add Class\n3 - Update Class\n4 - Delete Class\n5 - Back To Menu(B/b)\n********************"
         while True:
             print(msg)
             process = input("Your Choice: ")
@@ -90,7 +89,7 @@ class APP:
                 print("Wrong Choice.")
 
     def lesson_transactions(self):
-        msg = "*****\n1 - Lesson List\n2 - Add Lesson\n3 - Delete Lesson\n4 - Back To Menu(B/b)"
+        msg = "********************\n1 - Lesson List\n2 - Add Lesson\n3 - Delete Lesson\n4 - Back To Menu(B/b)\n********************"
         while True:
             print(msg)
             process = input("Your Choice: ")
@@ -139,6 +138,7 @@ class APP:
 
     def edit_student(self):
         classid = self.display_students()
+        print("Enter the ID of the student you want to edit.")
         studentid = int(input("Student ID: "))
 
         student = self.db.get_student_by_id(studentid)
@@ -156,6 +156,7 @@ class APP:
 
     def delete_student(self):
         classid = self.display_students()
+        print("Enter the ID of the student you want to delete.")
         studentid = int(input("Student ID: "))
 
         self.db.delete_student(studentid)
@@ -182,6 +183,7 @@ class APP:
 
     def edit_teacher(self):
         self.display_teachers()
+        print("Enter the ID of the teacher you want to edit.")
         teacherid = int(input("Teacher ID: "))
 
         teacher = self.db.get_teacher_by_id(teacherid)
@@ -200,6 +202,7 @@ class APP:
 
     def delete_teacher(self):
         self.display_teachers()
+        print("Enter the ID of the teacher you want to delete.")
         teacherid = int(input("Teacher ID: "))
 
         self.db.delete_teacher(teacherid)
@@ -215,6 +218,7 @@ class APP:
 
     def edit_class(self):
         self.display_classes()
+        print("Enter the ID of the class you want to edit.")
         classid = int(input("Class ID: "))
 
         cls = self.db.get_class_by_id(classid)
@@ -228,9 +232,39 @@ class APP:
 
     def delete_class(self):
         self.display_classes()
+        print("Enter the ID of the class you want to delete.")
         classid = int(input("Class ID: "))
 
         self.db.delete_class(classid)
+
+    def display_lesson(self):
+        lessons = self.db.get_lesson()
+        for l in lessons:
+            print(f'{l.id}: {l.Name}')
+    
+    def add_lesson(self):
+        self.display_lesson()
+        print("Each course name is registered once. If the course you want to enter is not on the list, continue.")
+        choice = input(" Do you want to continue?(Y/N): ")
+        print(choice)
+        while True:
+            if (choice == "Y") or (choice == "y") :
+                name = input("Lesson Name: ")
+                lesson = Lesson(None, name)
+                self.db.add_lesson(lesson)
+                break
+            elif (choice == "N") or (choice == "n"):
+                break
+            else:
+                print("Wrong Choice")
+
+    def delete_lesson(self):
+        self.display_lesson()
+        print("Enter the ID of the lesson you want to delete.")
+        lessonid = int(input("Lesson ID: "))
+
+        self.db.delete_lesson(lessonid)
+
 
 app = APP()
 app.init_app()

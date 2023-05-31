@@ -4,6 +4,7 @@ from connection import connection
 from Student import Student
 from Teacher import Teacher
 from Class import Class
+from Lesson import Lesson
 
 class DB_Manager:
 
@@ -183,11 +184,38 @@ class DB_Manager:
             print(f'Deleted {self.cursor.rowcount} records.')
         except mysql.connector.Error as err:
             print("Error:", err)
-            
-    def get_lesson():
-        pass
 
+    def get_lesson(self):
+        sql = "SELECT * From Lesson"
 
+        self.cursor.execute(sql)
+        try:
+            lsn = self.cursor.fetchall()
+            return Lesson.create_lesson(lsn)
+        except mysql.connector.Error as err:
+            print("Error:", err) 
+
+    def add_lesson(self, lesson: Lesson):
+        sql = "INSERT INTO Lesson(Name) VALUES (%s)"
+        values = (lesson.Name, )
+        self.cursor.execute(sql, values)
+
+        try:
+            self.connection.commit()
+            print(f'Added {self.cursor.rowcount} records.')
+        except mysql.connector.Error as err:
+            print("Error:", err)
+
+    def delete_lesson(self, lessonid):
+        sql = "DELETE From Lesson WHERE id = %s"
+        values = (lessonid,)
+        self.cursor.execute(sql, values)
+
+        try:
+            self.connection.commit()
+            print(f'Deleted {self.cursor.rowcount} records.')
+        except mysql.connector.Error as err:
+            print("Error:", err)
 
     def __del__(self):
         self.connection.close()
