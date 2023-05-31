@@ -3,6 +3,7 @@ from Student import Student
 from Teacher import Teacher
 from Class import Class
 from Lesson import Lesson
+from ClassLesson import ClassLesson
 import datetime
 
 
@@ -10,7 +11,6 @@ class APP:
     def __init__(self):
         self.db = DB_Manager()
 
-# Ders - sınıf için işlem
     def init_app(self):
         while True:
             print("========== MENU ==========")
@@ -18,7 +18,8 @@ class APP:
             print("2. Teacher Transactions")
             print("3. Class Transactions")
             print("4. Lesson Transactions")
-            print("5. EXİT (E/e)")
+            print("5. Editing Procedures for Teachers Entering the Courses")
+            print("6. EXİT (E/e)")
             print("==========================")
             process = input("Your Choice: ")
             if process == "1":
@@ -29,7 +30,9 @@ class APP:
                 self.class_transactions()
             elif process == "4":
                 self.lesson_transactions()
-            elif process == "E" or "e":
+            elif process == "5":
+                self.lesson_teachers_transactions()
+            elif (process == "E") or (process =="e") or (process =="6"):
                 break
             else: 
                 print("Wrong Choice.")
@@ -47,7 +50,7 @@ class APP:
                 self.edit_student()
             elif process == "4":
                 self.delete_student()
-            elif process == "B" or "b" or "5":
+            elif (process == "B") or (process == "b") or (process == "5"):
                 break
             else: 
                 print("Wrong Choice.")   
@@ -65,7 +68,7 @@ class APP:
                 self.edit_teacher()
             elif process == "4":
                 self.delete_teacher()
-            elif process == "B" or "b" or "5":
+            elif (process == "B") or (process == "b") or (process == "5"):
                 break
             else: 
                 print("Wrong Choice.") 
@@ -83,7 +86,7 @@ class APP:
                 self.edit_class()
             elif process == "4":
                 self.delete_class()
-            elif process == "B" or "b" or "5":
+            elif (process == "B") or (process == "b") or (process == "5"):
                 break
             else: 
                 print("Wrong Choice.")
@@ -99,11 +102,27 @@ class APP:
                 self.add_lesson()
             elif process == "3":
                 self.delete_lesson()
-            elif process == "B" or "b" or "4":
+            elif (process == "B") or (process == "b") or (process == "4"):
                 break
             else: 
                 print("Wrong Choice.")
   
+    def lesson_teachers_transactions(self):
+        msg = "********************\n1 - List Teachers Attending Classes\n2 - Add Teachers Attending Classes\n3 - Delete Teachers Attending Classes\n4 - Back To Menu(B/b)\n********************"
+        while True:
+            print(msg)
+            process = input("Your Choice: ")
+            if process == "1":
+                self.display_classlesson()
+            elif process == "2":
+                self.add_classlesson()
+            elif process == "3":
+                self.delete_classlesson()
+            elif (process == "B") or (process == "b") or (process == "4"):
+                break
+            else: 
+                print("Wrong Choice.")
+
     def display_classes(self):
         classes = self.db.get_classes()
         for c in classes:
@@ -210,12 +229,19 @@ class APP:
     def add_class(self):
         self.db.display_teachers_with_classes()
         print("*****A teacher is assigned for each class. That's why you can only choose a teacher who doesn't have a classroom.*****")
-        teacherid = int(input("Which teacher would you like to add class to?: "))
-
-        name = input("Class Name: ")
-        a_class = Class(None, name, teacherid)
-        self.db.add_class(a_class)
-
+        choice = input(" Do you want to continue?(Y/N): ")
+        while True:
+            if (choice == "Y") or (choice == "y") :
+                teacherid = int(input("Which teacher would you like to add class to?: "))
+                name = input("Class Name: ")
+                a_class = Class(None, name, teacherid)
+                self.db.add_class(a_class)
+                break
+            elif (choice == "N") or (choice == "n"):
+                break
+            else:
+                print("Wrong Choice")
+        
     def edit_class(self):
         self.display_classes()
         print("Enter the ID of the class you want to edit.")
@@ -245,8 +271,7 @@ class APP:
     def add_lesson(self):
         self.display_lesson()
         print("Each course name is registered once. If the course you want to enter is not on the list, continue.")
-        choice = input(" Do you want to continue?(Y/N): ")
-        print(choice)
+        choice = input("Do you want to continue?(Y/N): ")
         while True:
             if (choice == "Y") or (choice == "y") :
                 name = input("Lesson Name: ")
@@ -265,6 +290,28 @@ class APP:
 
         self.db.delete_lesson(lessonid)
 
+    def display_classlesson(self):
+        self.display_classes()
+        classid = int(input("Which class do you want to see?: "))
+        self.db.classlesson(classid)
+        return classid
+    
+    def add_classlesson(self):
+        self.display_classes()
+        classid = int(input("Which class would you like to add lesson and teacher to? Class ID: "))
+        self.display_teachers()
+        teacherid = int(input("Which teacher would you like to add? Teacher ID: "))
+        self.display_lesson()
+        lessonid = int(input("Which teacher would you like to add? Lesson ID: "))
+
+        classlesson = ClassLesson(classid, lessonid, teacherid)
+        self.db.add_classlesson(classlesson)
+        
+    def delete_classlesson(self):
+        classid = self.display_classlesson()
+        teacherid = int(input("Teacher ID: "))
+        lessonid = int(input("Lesson ID: "))
+        self.db.delete_classlesson(classid,lessonid, teacherid)
 
 app = APP()
 app.init_app()

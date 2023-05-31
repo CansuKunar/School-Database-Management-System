@@ -5,6 +5,7 @@ from Student import Student
 from Teacher import Teacher
 from Class import Class
 from Lesson import Lesson
+from ClassLesson import ClassLesson
 
 class DB_Manager:
 
@@ -125,11 +126,14 @@ class DB_Manager:
         sql = "SELECT teacher.id, teacher.name, teacher.surname, class.name FROM Teacher LEFT JOIN Class  ON teacher.id = class.teacherid"
 
         self.cursor.execute(sql)
-        teachers = self.cursor.fetchall()
-
-        print("Teachers with Classes:")
-        for teacher in teachers:
-            print(f"Teacher ID: {teacher[0]}, Name: {teacher[1]} {teacher[2]}, Class: {teacher[3]} ")
+        
+        try:
+            teachers = self.cursor.fetchall()
+            print("Teachers with Classes:")
+            for teacher in teachers:
+                print(f"Teacher ID: {teacher[0]}, Name: {teacher[1]} {teacher[2]}, Class: {teacher[3]} ")
+        except mysql.connector.Error as err:
+            print("Error:", err)   
 
     def get_classes(self):
         sql = "SELECT * From Class"
@@ -209,6 +213,55 @@ class DB_Manager:
     def delete_lesson(self, lessonid):
         sql = "DELETE From Lesson WHERE id = %s"
         values = (lessonid,)
+        self.cursor.execute(sql, values)
+
+        try:
+            self.connection.commit()
+            print(f'Deleted {self.cursor.rowcount} records.')
+        except mysql.connector.Error as err:
+            print("Error:", err)
+
+    def classlesson(self, classid):
+        sql = """
+        SELECT Teacher.id, Teacher.Name, Teacher.Surname, Lesson.id, Lesson.Name
+        FROM Classlesson 
+        JOIN Teacher ON Classlesson.teacherid = Teacher.id
+        JOIN Lesson ON Classlesson.lessonid = Lesson.id
+        WHERE Classlesson.classid = %s
+    """
+        values = (classid,)
+
+        self.cursor.execute(sql, values)
+        try:
+            lessons = self.cursor.fetchall()
+            if len(lessons) > 0:
+                print("Teachers in Class ID", classid, ":")
+                for result in lessons:
+                    teacher_id = result[0]
+                    teacher_name = result[1]
+                    teacher_surname = result[2]
+                    lesson_id = result[3]
+                    lesson_name = result[4]
+                    print("Teacher ID:",teacher_id,"Teacher Name:", teacher_name,teacher_surname,"\tLesson ID:",lesson_id, "Lesson Name:", lesson_name)
+            else:
+                print("No teachers found for Class ID", classid)
+        except mysql.connector.Error as err:
+            print("Error:", err) 
+
+    def add_classlesson(self, classlesson: ClassLesson):
+        sql = "INSERT INTO Classlesson(classid, lessonid, teacherid) VALUES (%s,%s,%s)"
+        values = (classlesson.classid, classlesson.lessonid,classlesson.Teacherid)
+        self.cursor.execute(sql, values)
+
+        try:
+            self.connection.commit()
+            print(f'Added {self.cursor.rowcount} records.')
+        except mysql.connector.Error as err:
+            print("Error:", err)
+
+    def delete_classlesson(self, classid, lessonid, teacherid):
+        sql = "DELETE From Classlesson WHERE classid = %s AND lessonid = %s AND teacherid = %s"
+        values = (classid, lessonid, teacherid)
         self.cursor.execute(sql, values)
 
         try:
