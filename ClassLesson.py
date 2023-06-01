@@ -8,3 +8,4 @@ class ClassLesson:
         self.classid = classid
         self.lessonid = lessonid
         self.Teacherid = Teacherid
+        
