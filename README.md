@@ -8,7 +8,6 @@
    [+] Open CMD on the root directory and run the following
         [-] pip install mysql-connector-python
     ```
-<br>
 
 # Procedure
  * Enter your information in the connection.py file.
