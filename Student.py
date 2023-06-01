@@ -14,7 +14,6 @@ class Student:
         self.Gender = Gender
         self.classid = classid
 
-
     @staticmethod
     def create_student(std):
         list = []
