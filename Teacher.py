@@ -11,7 +11,6 @@ class Teacher:
         self.Birthdate = Birthdate
         self.Gender = Gender
 
-
     @staticmethod
     def create_teacher(tch):
         list = []
