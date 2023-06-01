@@ -12,5 +12,5 @@
 # Procedure
  * Enter your information in the connection.py file.
  * Run the database_create.py file.
- * Run the app.py file.
+ * Run the APP.py file.
 
